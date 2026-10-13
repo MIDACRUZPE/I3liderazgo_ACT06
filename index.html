@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto i3 - Diagnóstico Integral de Power Skills LCC</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF & AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        i3Yellow: '#FACC15',
+                        i3Purple: '#581C87',
+                        i3DarkPurple: '#3B0764',
+                        i3Cyan: '#06B6D4',
+                        i3Teal: '#2DD4BF',
+                        i3Orange: '#F97316',
+                        i3Lime: '#A3E635',
+                        i3Pink: '#EC4899',
+                        i3Fuchsia: '#D946EF'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F3F4F6;
+        }
+        .sticker-card {
+            border: 4px solid #FFFFFF;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-radius: 1.25rem;
+        }
+        .comic-bubble {
+            border-radius: 1.5rem;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+        }
+        .likert-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .likert-btn.active {
+            background-color: #581C87 !important;
+            color: #FFFFFF !important;
+            border-color: #FACC15 !important;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(88, 28, 135, 0.3);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F1F1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #581C87;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- NAVBAR INSTITUCIONAL -->
+    <header class="bg-i3DarkPurple text-white sticky top-0 z-50 border-b-4 border-i3Yellow shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-i3Yellow text-i3DarkPurple font-black px-3 py-1 rounded-xl text-xl tracking-tighter border-2 border-white shadow">
+                    i3
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-wide text-white leading-tight">instituto i3</h1>
+                    <p class="text-xs text-i3Teal font-medium">inclusión • inflexión • impacto</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="bg-purple-800 border border-purple-600 text-xs text-purple-200 px-3 py-1.5 rounded-full font-bold hidden sm:inline-block">
+                    <i class="fa-solid fa-graduation-cap text-i3Yellow mr-1"></i> Práctica Profesional
+                </span>
+                <button onclick="confirmResetAll()" class="bg-i3Orange hover:bg-orange-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow transition">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> Reiniciar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+        <!-- PASO 0: HERO & DATOS GENERALES -->
+        <section class="bg-i3Yellow text-i3DarkPurple sticker-card p-6 sm:p-8 mb-8 relative overflow-hidden">
+            <div class="max-w-4xl relative z-10">
+                <div class="inline-block bg-i3DarkPurple text-i3Yellow font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-3">
+                    Guía Interactiva de Afianzamiento Conceptual
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-3">
+                    Diagnóstico Integral de Power Skills LCC
+                </h2>
+                <p class="text-sm sm:text-base font-semibold text-purple-950 mb-6">
+                    Evalúa tus habilidades transversales en <span class="bg-white/80 px-2 py-0.5 rounded text-purple-900">Gestión del Tiempo</span>, <span class="bg-white/80 px-2 py-0.5 rounded text-purple-900">Comunicación Asertiva</span>, <span class="bg-white/80 px-2 py-0.5 rounded text-purple-900">Resolución de Conflictos</span> e <span class="bg-white/80 px-2 py-0.5 rounded text-purple-900">Influencia y Liderazgo Laboral</span>.
+                </p>
+
+                <!-- DATOS DEL ESTUDIANTE -->
+                <div class="bg-white p-4 sm:p-6 rounded-2xl border-2 border-purple-900/20 shadow-md mb-6">
+                    <h3 class="text-base font-extrabold text-i3DarkPurple mb-3 flex items-center">
+                        <i class="fa-solid fa-id-card text-i3Pink mr-2"></i> Datos del Practicante
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1">Nombre Completo *</label>
+                            <input type="text" id="studentName" placeholder="Ej. Andrea Gómez" class="w-full bg-slate-50 border-2 border-slate-300 rounded-xl px-4 py-2 text-sm font-bold focus:outline-none focus:border-i3Purple transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1">Área o Programa de Práctica *</label>
+                            <input type="text" id="practiceArea" placeholder="Ej. Gestión Administrativa / Marketing" class="w-full bg-slate-50 border-2 border-slate-300 rounded-xl px-4 py-2 text-sm font-bold focus:outline-none focus:border-i3Purple transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EXPLICACIÓN DEL MODELO LCC -->
+                <div class="bg-i3DarkPurple text-white p-5 sm:p-6 rounded-2xl border-2 border-purple-700 shadow-md mb-6">
+                    <h3 class="text-base font-extrabold text-i3Yellow mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-brain"></i> ¿Qué es el Modelo LCC (Lenguaje, Cognición y Conducta)?
+                    </h3>
+                    <p class="text-xs sm:text-sm text-purple-100 leading-relaxed mb-4">
+                        El modelo <strong>LCC</strong> analiza cómo tu forma de pensar, hablar y actuar influyen directamente en tu desempeño cotidiano durante la práctica profesional o tu primer empleo:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="bg-purple-900/90 p-3.5 rounded-xl border border-purple-600">
+                            <span class="text-xs font-black text-i3Pink flex items-center gap-1.5 mb-1.5">
+                                <span>🗣️</span> 1. Lenguaje (L)
+                            </span>
+                            <p class="text-xs text-purple-200 leading-snug">
+                                Expresión verbal, frases habituales, forma de pedir instrucciones, solicitar ayuda y comunicar compromisos.
+                            </p>
+                        </div>
+                        <div class="bg-purple-900/90 p-3.5 rounded-xl border border-purple-600">
+                            <span class="text-xs font-black text-i3Cyan flex items-center gap-1.5 mb-1.5">
+                                <span>🧠</span> 2. Cognición (C)
+                            </span>
+                            <p class="text-xs text-purple-200 leading-snug">
+                                Creencias profundas, manejo del miedo a equivocarse, confianza en tus capacidades y recepción de observaciones.
+                            </p>
+                        </div>
+                        <div class="bg-purple-900/90 p-3.5 rounded-xl border border-purple-600">
+                            <span class="text-xs font-black text-i3Lime flex items-center gap-1.5 mb-1.5">
+                                <span>🚀</span> 3. Conducta (CO)
+                            </span>
+                            <p class="text-xs text-purple-200 leading-snug">
+                                Acciones concretas, hábitos de planificación diaria, cumplimiento de entregas e iniciativa proactiva en el puesto.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GUÍA PASO A PASO DEL FLUJO DEL ESTUDIANTE -->
+                <div class="bg-white p-5 sm:p-6 rounded-2xl border-2 border-purple-900/20 shadow-md text-slate-800">
+                    <h3 class="text-base font-extrabold text-i3DarkPurple mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-route text-i3Orange"></i> Guía del Estudiante: ¿Cómo proceder dentro de la plataforma?
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                            <div>
+                                <span class="bg-i3Purple text-white font-black text-[10px] px-2 py-0.5 rounded-full uppercase inline-block mb-1">Paso 1</span>
+                                <p class="font-extrabold text-slate-900 text-xs mb-1">Ingresa tus Datos</p>
+                                <p class="text-slate-600 text-[11px] leading-tight">Diligencia tu Nombre y Área de Práctica en el formulario superior.</p>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                            <div>
+                                <span class="bg-i3Purple text-white font-black text-[10px] px-2 py-0.5 rounded-full uppercase inline-block mb-1">Paso 2</span>
+                                <p class="font-extrabold text-slate-900 text-xs mb-1">Responde las 4 Pestañas</p>
+                                <p class="text-slate-600 text-[11px] leading-tight">Navega por los 4 módulos de competencias calificando cada ítem de 1 a 5.</p>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                            <div>
+                                <span class="bg-i3Purple text-white font-black text-[10px] px-2 py-0.5 rounded-full uppercase inline-block mb-1">Paso 3</span>
+                                <p class="font-extrabold text-slate-900 text-xs mb-1">Genera tu Dashboard</p>
+                                <p class="text-slate-600 text-[11px] leading-tight">Haz clic en <strong>Analizar mi Perfil Integral LCC</strong> para obtener tu gráfico y análisis.</p>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                            <div>
+                                <span class="bg-i3Purple text-white font-black text-[10px] px-2 py-0.5 rounded-full uppercase inline-block mb-1">Paso 4</span>
+                                <p class="font-extrabold text-slate-900 text-xs mb-1">Exporta tu Informe PDF</p>
+                                <p class="text-slate-600 text-[11px] leading-tight">Descarga tu PDF único e intégralo a la conversación con tu Gem Coach.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BARRA DE PROGRESO GLOBAL -->
+        <section class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-extrabold text-slate-600 uppercase tracking-wider">
+                    <i class="fa-solid fa-list-check text-i3Cyan mr-1"></i> Progreso General del Diagnóstico
+                </span>
+                <span id="progressText" class="text-xs font-extrabold text-i3DarkPurple bg-purple-100 px-3 py-1 rounded-full">
+                    0 / 84 Respuestas (0%)
+                </span>
+            </div>
+            <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                <div id="progressBar" class="bg-i3Teal h-full transition-all duration-300 rounded-full" style="width: 0%"></div>
+            </div>
+        </section>
+
+        <!-- NAVEGACIÓN POR PESTAÑAS (COMPETENCIAS) -->
+        <div class="flex flex-wrap gap-2 mb-6 border-b-2 border-slate-200 pb-2">
+            <button onclick="switchTab('time')" id="tab-time" class="tab-btn active bg-i3Purple text-white font-extrabold py-3 px-5 rounded-2xl shadow transition flex items-center gap-2 text-sm">
+                <span>⏳</span> <span>Gestión del Tiempo</span>
+                <span id="badge-time" class="bg-yellow-400 text-purple-950 text-xs font-black px-2 py-0.5 rounded-full ml-1">0/21</span>
+            </button>
+            <button onclick="switchTab('comm')" id="tab-comm" class="tab-btn bg-white hover:bg-slate-100 text-slate-700 font-extrabold py-3 px-5 rounded-2xl shadow-sm transition flex items-center gap-2 text-sm">
+                <span>🗣️</span> <span>Comunicación Asertiva</span>
+                <span id="badge-comm" class="bg-slate-200 text-slate-800 text-xs font-black px-2 py-0.5 rounded-full ml-1">0/21</span>
+            </button>
+            <button onclick="switchTab('conflict')" id="tab-conflict" class="tab-btn bg-white hover:bg-slate-100 text-slate-700 font-extrabold py-3 px-5 rounded-2xl shadow-sm transition flex items-center gap-2 text-sm">
+                <span>🤝</span> <span>Resolución de Conflictos</span>
+                <span id="badge-conflict" class="bg-slate-200 text-slate-800 text-xs font-black px-2 py-0.5 rounded-full ml-1">0/21</span>
+            </button>
+            <button onclick="switchTab('leadership')" id="tab-leadership" class="tab-btn bg-white hover:bg-slate-100 text-slate-700 font-extrabold py-3 px-5 rounded-2xl shadow-sm transition flex items-center gap-2 text-sm">
+                <span>🚀</span> <span>Influencia y Liderazgo Laboral</span>
+                <span id="badge-leadership" class="bg-slate-200 text-slate-800 text-xs font-black px-2 py-0.5 rounded-full ml-1">0/21</span>
+            </button>
+        </div>
+
+        <!-- LEYENDA ESCALA LIKERT -->
+        <div class="bg-purple-50 border-2 border-purple-200 p-4 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm font-bold text-purple-900">
+            <span class="flex items-center gap-1 text-i3DarkPurple">
+                <i class="fa-solid fa-circle-info text-i3Pink"></i> Escala de Calificación (1 a 5):
+            </span>
+            <div class="flex flex-wrap gap-2 sm:gap-4">
+                <span class="bg-white px-2.5 py-1 rounded-lg border border-purple-200">1: Nunca / Rara vez</span>
+                <span class="bg-white px-2.5 py-1 rounded-lg border border-purple-200">2: Pocas veces</span>
+                <span class="bg-white px-2.5 py-1 rounded-lg border border-purple-200">3: A veces</span>
+                <span class="bg-white px-2.5 py-1 rounded-lg border border-purple-200">4: Frecuentemente</span>
+                <span class="bg-white px-2.5 py-1 rounded-lg border border-purple-200">5: Siempre / Habitual</span>
+            </div>
+        </div>
+
+        <!-- CONTENEDORES DE PREGUNTAS POR PESTAÑA -->
+        <div id="tab-content-time" class="tab-content"></div>
+        <div id="tab-content-comm" class="tab-content hidden"></div>
+        <div id="tab-content-conflict" class="tab-content hidden"></div>
+        <div id="tab-content-leadership" class="tab-content hidden"></div>
+
+        <!-- BOTONES DE ACCIÓN Y NAVEGACIÓN ENTRE PESTAÑAS -->
+        <div class="mt-8 flex flex-wrap justify-between items-center gap-4 bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+            <button id="prevBtn" onclick="navigateWizard(-1)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-6 rounded-xl transition flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Anterior
+            </button>
+            
+            <button id="nextBtn" onclick="navigateWizard(1)" class="bg-i3Purple hover:bg-purple-900 text-white font-bold py-3 px-6 rounded-xl shadow-md transition flex items-center gap-2">
+                Siguiente <i class="fa-solid fa-arrow-right"></i>
+            </button>
+
+            <button onclick="generateDashboard()" class="bg-i3Lime hover:bg-lime-500 text-purple-950 font-extrabold py-3.5 px-8 rounded-xl shadow-lg transition-all text-base flex items-center gap-2 ml-auto">
+                <i class="fa-solid fa-chart-pie text-lg"></i> Analizar mi Perfil Integral LCC ▶
+            </button>
+        </div>
+
+        <!-- PASO 2: DASHBOARD DE RESULTADOS (OCULTO INICIALMENTE) -->
+        <section id="dashboardSection" class="mt-12 hidden">
+            <div class="bg-i3DarkPurple text-white sticker-card p-6 sm:p-8 mb-8">
+                <div class="flex flex-wrap justify-between items-center gap-4 border-b border-purple-700 pb-4 mb-6">
+                    <div>
+                        <span class="bg-i3Yellow text-purple-950 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
+                            Resultados Consolidados
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">Dashboard Integral de Power Skills</h2>
+                        <p class="text-sm text-purple-200" id="dashStudentMeta">Practicante: - | Área: -</p>
+                    </div>
+                    <button onclick="downloadPDF()" class="bg-i3Yellow hover:bg-yellow-300 text-purple-950 font-extrabold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-file-pdf text-lg text-red-600"></i> Descargar Informe PDF Consolidado ▶
+                    </button>
+                </div>
+
+                <!-- CARDS RESUMEN SUPERIOR -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-purple-900/80 p-5 rounded-2xl border-2 border-purple-600/50 text-center">
+                        <span class="text-xs font-bold text-purple-300 uppercase tracking-wider block mb-1">Promedio General Power Skills</span>
+                        <span id="globalScore" class="text-4xl font-black text-i3Yellow">0.0</span>
+                        <span id="globalLevel" class="block text-xs font-extrabold mt-1 text-i3Teal">-</span>
+                    </div>
+                    <div class="bg-purple-900/80 p-5 rounded-2xl border-2 border-purple-600/50 text-center">
+                        <span class="text-xs font-bold text-purple-300 uppercase tracking-wider block mb-1">Competencia Fuerte</span>
+                        <span id="strongestSkill" class="text-lg font-extrabold text-i3Lime flex items-center justify-center gap-1 mt-2">
+                            <i class="fa-solid fa-trophy"></i> -
+                        </span>
+                    </div>
+                    <div class="bg-purple-900/80 p-5 rounded-2xl border-2 border-purple-600/50 text-center">
+                        <span class="text-xs font-bold text-purple-300 uppercase tracking-wider block mb-1">Oportunidad de Mejora</span>
+                        <span id="weakestSkill" class="text-lg font-extrabold text-i3Orange flex items-center justify-center gap-1 mt-2">
+                            <i class="fa-solid fa-bullseye"></i> -
+                        </span>
+                    </div>
+                </div>
+
+                <!-- GRÁFICO RADAR & DESGLOSE LCC -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-8">
+                    <!-- CONTENEDOR CHART -->
+                    <div class="bg-white p-6 rounded-3xl text-slate-800 shadow-inner">
+                        <h4 class="text-base font-extrabold text-i3DarkPurple mb-4 text-center flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-i3Cyan"></i> Perfil Radial de Competencias
+                        </h4>
+                        <div class="relative w-full max-w-md mx-auto aspect-square">
+                            <canvas id="skillsRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- DESGLOSE TRIANGULACIÓN LCC TRANSVERSAL -->
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-extrabold text-i3Yellow flex items-center gap-2">
+                            <i class="fa-solid fa-diagram-project"></i> Triangulación LCC Transversal
+                        </h4>
+                        <p class="text-xs text-purple-200">
+                            Promedio acumulado del estudiante dividiendo las 84 preguntas entre sus dimensiones psicológico-conductuales:
+                        </p>
+
+                        <!-- LENGUAJE -->
+                        <div class="bg-purple-900/90 p-4 rounded-2xl border border-purple-600">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-extrabold text-i3Pink flex items-center gap-2">
+                                    <span>🗣️</span> Lenguaje (L)
+                                </span>
+                                <span id="scoreL" class="text-lg font-black text-white">0.0 / 5.0</span>
+                            </div>
+                            <p class="text-xs text-purple-200">Forma de expresarte, pedir claridad y estructurar tus mensajes verbales.</p>
+                        </div>
+
+                        <!-- COGNICIÓN -->
+                        <div class="bg-purple-900/90 p-4 rounded-2xl border border-purple-600">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-extrabold text-i3Cyan flex items-center gap-2">
+                                    <span>🧠</span> Cognición (C)
+                                </span>
+                                <span id="scoreC" class="text-lg font-black text-white">0.0 / 5.0</span>
+                            </div>
+                            <p class="text-xs text-purple-200">Creencias, gestión del miedo al error y mindset profesional inicial.</p>
+                        </div>
+
+                        <!-- CONDUCTA -->
+                        <div class="bg-purple-900/90 p-4 rounded-2xl border border-purple-600">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-extrabold text-i3Lime flex items-center gap-2">
+                                    <span>🚀</span> Conducta (CO)
+                                </span>
+                                <span id="scoreCO" class="text-lg font-black text-white">0.0 / 5.0</span>
+                            </div>
+                            <p class="text-xs text-purple-200">Acciones concretas, hábito de planificación y ejecución en el puesto.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DETALLE POR COMPETENCIA -->
+                <h4 class="text-xl font-extrabold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-i3Yellow"></i> Detalle por Power Skill y Plan Orientado al Crecimiento
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="skillsDetailGrid"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL CUSTOMIZADO (REEMPLAZO DE ALERT/CONFIRM) -->
+    <div id="i3Modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl border-4 border-i3Yellow shadow-2xl max-w-md w-full p-6 text-slate-800 transform transition-all">
+            <h3 id="modalTitle" class="text-lg font-extrabold text-i3DarkPurple mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-i3Cyan"></i> Mensaje Institucional
+            </h3>
+            <p id="modalBody" class="text-sm font-semibold text-slate-600 mb-6 leading-relaxed">
+                ...
+            </p>
+            <div id="modalActions" class="flex justify-end gap-3">
+                <button id="modalCancelBtn" onclick="closeModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-xl text-xs transition">
+                    Cancelar
+                </button>
+                <button id="modalConfirmBtn" class="bg-i3Purple hover:bg-purple-900 text-white font-extrabold py-2 px-5 rounded-xl text-xs shadow transition">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER INSTITUCIONAL -->
+    <footer class="bg-i3DarkPurple text-purple-300 py-6 border-t-4 border-i3Yellow mt-12 text-center text-xs font-semibold">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <p>© 2026 Instituto i3 — Modelo de Formación para la Práctica Profesional</p>
+            <p class="text-i3Teal font-bold">Inclusión • Inflexión • Impacto</p>
+        </div>
+    </footer>
+
+    <!-- LOGICA JAVASCRIPT VANILLA COMPLETA -->
+    <script>
+        // SISTEMA DE MODALES SIN ALERT() NI CONFIRM()
+        let modalConfirmCallback = null;
+
+        // CONJUNTO DE ÍTEMS CON REDACCIÓN INVERSA (INVERSIÓN DE PUNTAJE: 6 - VALOR)
+        const reverseItems = new Set([
+            'q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12','q13','q14','q15','q16','q17','q18','q19','q20','q21', // Tiempo (todos)
+            'q22','q23','q24','q26','q29','q30','q31','q32','q33','q34','q36','q37',                                             // Comunicación
+            'q43','q44','q45','q50','q51','q52','q55','q57','q58',                                                             // Conflictos
+            'q64','q65','q71','q72','q73','q75','q78'                                                                         // Influencia
+        ]);
+
+        function getCalculatedValue(qId) {
+            const raw = answers[qId];
+            if (raw === undefined) return 0;
+            return reverseItems.has(qId) ? (6 - raw) : raw;
+        }
+
+        function showCustomModal({ title, message, confirmText = 'Aceptar', cancelText = 'Cancelar', showCancel = true, onConfirm = null }) {
+            document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-circle-info text-i3Cyan"></i> ${title}`;
+            document.getElementById('modalBody').innerText = message;
+            
+            const cancelBtn = document.getElementById('modalCancelBtn');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+
+            confirmBtn.innerText = confirmText;
+            
+            if (showCancel) {
+                cancelBtn.classList.remove('hidden');
+                cancelBtn.innerText = cancelText;
+            } else {
+                cancelBtn.classList.add('hidden');
+            }
+
+            modalConfirmCallback = onConfirm;
+
+            confirmBtn.onclick = () => {
+                if (modalConfirmCallback) modalConfirmCallback();
+                closeModal();
+            };
+
+            document.getElementById('i3Modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('i3Modal').classList.add('hidden');
+            modalConfirmCallback = null;
+        }
+
+        // BASE DE DATOS COMPLETA CON LAS 84 PREGUNTAS TRANSCRITAS EXACTAS
+        const skillsData = {
+            time: {
+                id: 'time',
+                title: 'Gestión del Tiempo',
+                icon: '⏳',
+                color: 'bg-yellow-400 text-purple-950',
+                questions: [
+                    // Lenguaje (L) 1-7
+                    { id: 'q1', dim: 'L', dimName: 'Lenguaje', text: 'Expreso verbalmente la frase: "Tengo demasiado trabajo y no sé por dónde empezar".' },
+                    { id: 'q2', dim: 'L', dimName: 'Lenguaje', text: 'Suelo decir "sí" de inmediato a cualquier tarea nueva que me piden, sin revisar mi disponibilidad.' },
+                    { id: 'q3', dim: 'L', dimName: 'Lenguaje', text: 'Ante una solicitud apresurada de mi tutor o compañero, digo: "Se lo tengo listo para ya mismo".' },
+                    { id: 'q4', dim: 'L', dimName: 'Lenguaje', text: 'Digo frecuentemente: "Déjamelo a mí, me rinde más si lo hago solo".' },
+                    { id: 'q5', dim: 'L', dimName: 'Lenguaje', text: 'Suelo justificarme diciendo: "Se me pasó esa fecha porque no alcancé a anotarla".' },
+                    { id: 'q6', dim: 'L', dimName: 'Lenguaje', text: 'Expreso a otros: "Hablemos de eso después, en este momento estoy saturado".' },
+                    { id: 'q7', dim: 'L', dimName: 'Lenguaje', text: 'Suelo repetir: "Mañana sin falta me pongo al día con ese tema importante".' },
+                    // Cognición (C) 8-14
+                    { id: 'q8', dim: 'C', dimName: 'Cognición', text: 'Pienso que si le digo a mi jefe que no alcanzo a hacer algo, pensará que no soy competente.' },
+                    { id: 'q9', dim: 'C', dimName: 'Cognición', text: 'Creo que anotar y planificar mis tareas diarias en una agenda o lista es una pérdida de tiempo.' },
+                    { id: 'q10', dim: 'C', dimName: 'Cognición', text: 'Siento que debo resolver los encargos de inmediato apenas me llegan, aunque no sean urgentes.' },
+                    { id: 'q11', dim: 'C', dimName: 'Cognición', text: 'Pienso que entre más ocupado y corriendo me vea en la oficina, mejor percepción tendrán de mi trabajo.' },
+                    { id: 'q12', dim: 'C', dimName: 'Cognición', text: 'Creo que cualquier imprevisto de un compañero es más importante que los reportes que debo entregar hoy.' },
+                    { id: 'q13', dim: 'C', dimName: 'Cognición', text: 'Siento que bajo presión extrema o a última hora logro trabajar con mayor concentración.' },
+                    { id: 'q14', dim: 'C', dimName: 'Cognición', text: 'Pienso que pedir claridad sobre las fechas límite de un encargo demuestra falta de autonomía.' },
+                    // Conducta (CO) 15-21
+                    { id: 'q15', dim: 'CO', dimName: 'Conducta', text: 'Abro el correo o la mensajería personal antes de definir cuáles son mis tareas principales de la jornada.' },
+                    { id: 'q16', dim: 'CO', dimName: 'Conducta', text: 'Acepto participar en reuniones o llamadas sin conocer cuál es el objetivo o mi rol específico en ellas.' },
+                    { id: 'q17', dim: 'CO', dimName: 'Conducta', text: 'Interrumpo la elaboración de un reporte prioritario para atender solicitudes secundarias o notificaciones.' },
+                    { id: 'q18', dim: 'CO', dimName: 'Conducta', text: 'Pospongo las tareas más complejas o analíticas para el final del día cuando ya estoy fatigado.' },
+                    { id: 'q19', dim: 'CO', dimName: 'Conducta', text: 'Extiendo mi jornada laboral o me llevo trabajo a casa para poder ponerme al día con mis pendientes.' },
+                    { id: 'q20', dim: 'CO', dimName: 'Conducta', text: 'Intento realizar varias actividades al mismo tiempo (multitasking) para tratar de avanzar más rápido.' },
+                    { id: 'q21', dim: 'CO', dimName: 'Conducta', text: 'Trabajo sin una lista diaria de chequeo que me permita verificar el avance real de mis actividades.' }
+                ]
+            },
+            comm: {
+                id: 'comm',
+                title: 'Comunicación Asertiva',
+                icon: '🗣️',
+                color: 'bg-cyan-500 text-white',
+                questions: [
+                    // Lenguaje (L) 22-28
+                    { id: 'q22', dim: 'L', dimName: 'Lenguaje', text: 'Al recibir una indicación difusa, digo "Entendido" aunque me hayan quedado dudas sobre cómo ejecutarla.' },
+                    { id: 'q23', dim: 'L', dimName: 'Lenguaje', text: 'Suelo iniciar mis intervenciones usando frases como "Qué pena molestar..." o "Perdón si me equivoco...".' },
+                    { id: 'q24', dim: 'L', dimName: 'Lenguaje', text: 'Utilizo muletillas constantes ("eh", "o sea", "bueno") o bajo mi tono de voz al sentirme inseguro o presionado.' },
+                    { id: 'q25', dim: 'L', dimName: 'Lenguaje', text: 'Repito con mis propias palabras lo que mi tutor me pidió para asegurarme de haber comprendido la instrucción.' },
+                    { id: 'q26', dim: 'L', dimName: 'Lenguaje', text: 'Suelo usar términos generales ("falta un poquito", "ya casi") en lugar de dar avances con datos concretos.' },
+                    { id: 'q27', dim: 'L', dimName: 'Lenguaje', text: 'Si cometo un error en un reporte, lo comunico a tiempo explicando lo sucedido sin buscar excusas.' },
+                    { id: 'q28', dim: 'L', dimName: 'Lenguaje', text: 'Al expresar una duda en público, aclaro el contexto específico para no hacer perder tiempo al equipo.' },
+                    // Cognición (C) 29-35
+                    { id: 'q29', dim: 'C', dimName: 'Cognición', text: 'Pienso que por ser practicante o profesional junior mis opiniones no aportan valor en las reuniones.' },
+                    { id: 'q30', dim: 'C', dimName: 'Cognición', text: 'Me da temor hacer preguntas sobre una tarea por pensar que el equipo creerá que no sé lo suficiente.' },
+                    { id: 'q31', dim: 'C', dimName: 'Cognición', text: 'Siento que si me contradicen en una idea, están evaluando negativamente mi capacidad profesional.' },
+                    { id: 'q32', dim: 'C', dimName: 'Cognición', text: 'Creo que debo tener la respuesta perfecta antes de atreverme a intervenir en una conversación.' },
+                    { id: 'q33', dim: 'C', dimName: 'Cognición', text: 'Considero que es preferible guardar silencio ante una instrucción confusa para no generar incomodidad.' },
+                    { id: 'q34', dim: 'C', dimName: 'Cognición', text: 'Siento ansiedad o temor al pensar en abordar a un jefe de área o superior jerárquico.' },
+                    { id: 'q35', dim: 'C', dimName: 'Cognición', text: 'Pienso que escuchar con atención a mis compañeros es tan importante como preparar mis intervenciones.' },
+                    // Conducta (CO) 36-42
+                    { id: 'q36', dim: 'CO', dimName: 'Conducta', text: 'En reuniones presenciales o virtuales, mantengo una postura encorvada y evito el contacto visual.' },
+                    { id: 'q37', dim: 'CO', dimName: 'Conducta', text: 'Envío correos electrónicos o mensajes sin revisar antes la ortografía, la claridad y los archivos adjuntos.' },
+                    { id: 'q38', dim: 'CO', dimName: 'Conducta', text: 'Frente a una situación de tensión con un cliente o tutor, tomo una pausa breve antes de responder de forma impulsiva.' },
+                    { id: 'q39', dim: 'CO', dimName: 'Conducta', text: 'Me adapto al lenguaje del interlocutor (técnico con pares, simple y directo con otras áreas).' },
+                    { id: 'q40', dim: 'CO', dimName: 'Conducta', text: 'En lugar de interrumpir mientras otro habla, tomo notas para responder cuando sea mi turno.' },
+                    { id: 'q41', dim: 'CO', dimName: 'Conducta', text: 'Confirmo por escrito (correo o mensaje) los acuerdos importantes conversados verbalmente en una reunión.' },
+                    { id: 'q42', dim: 'CO', dimName: 'Conducta', text: 'Busco activamente espacios para validar si la información que entregué fue clara para el equipo.' }
+                ]
+            },
+            conflict: {
+                id: 'conflict',
+                title: 'Resolución de Conflictos',
+                icon: '🤝',
+                color: 'bg-orange-500 text-white',
+                questions: [
+                    // Lenguaje (L) 43-49
+                    { id: 'q43', dim: 'L', dimName: 'Lenguaje', text: 'Ante un problema con una entrega, digo de inmediato: "Qué pena, todo fue mi culpa" para terminar la tensión rápido.' },
+                    { id: 'q44', dim: 'L', dimName: 'Lenguaje', text: 'Uso frases tajantes como "Es que mi compañero no me mandó la información a tiempo" para desviar la responsabilidad.' },
+                    { id: 'q45', dim: 'L', dimName: 'Lenguaje', text: 'Evito hablar de las diferencias diciendo: "No pasa nada, dejemos eso así" aunque el problema persista.' },
+                    { id: 'q46', dim: 'L', dimName: 'Lenguaje', text: 'Sustituyo acusaciones como "Usted no me explicó" por observaciones como "Necesito aclarar este punto de la guía".' },
+                    { id: 'q47', dim: 'L', dimName: 'Lenguaje', text: 'Ofrezco disculpas sinceras cuando identifico que cometí una equivocación en un procedimiento.' },
+                    { id: 'q48', dim: 'L', dimName: 'Lenguaje', text: 'Uso un tono de voz sereno y pausado aun cuando la otra persona se encuentre alterada o molesta.' },
+                    { id: 'q49', dim: 'L', dimName: 'Lenguaje', text: 'Propongo alternativas de solución con frases como: "¿Qué tal si intentamos ajustar este paso?".' },
+                    // Cognición (C) 50-56
+                    { id: 'q50', dim: 'C', dimName: 'Cognición', text: 'Siento que cometer un error en la práctica profesional significa que me van a calificar mal o me van a despedir.' },
+                    { id: 'q51', dim: 'C', dimName: 'Cognición', text: 'Interpreto los desacuerdos laborales como problemas o ataques personales hacia mí.' },
+                    { id: 'q52', dim: 'C', dimName: 'Cognición', text: 'Me da temor expresar una opinión diferente a la de mi equipo por miedo a no encajar o caerles mal.' },
+                    { id: 'q53', dim: 'C', dimName: 'Cognición', text: 'Antes de reaccionar ante un reclamo, me pregunto qué emoción estoy sintiendo en ese instante.' },
+                    { id: 'q54', dim: 'C', dimName: 'Cognición', text: 'Analizo si la otra persona puede tener parte de la razón antes de defender firmemente mi postura.' },
+                    { id: 'q55', dim: 'C', dimName: 'Cognición', text: 'Siento la necesidad compulsiva de demostrarle al otro que yo tenía la razón en una discusión.' },
+                    { id: 'q56', dim: 'C', dimName: 'Cognición', text: 'Considero los errores en los procesos como oportunidades grupales de aprendizaje y mejora.' },
+                    // Conducta (CO) 57-63
+                    { id: 'q57', dim: 'CO', dimName: 'Conducta', text: 'Me bloqueo emocionalmente o me aíslo del equipo cuando recibo una corrección o llamada de atención.' },
+                    { id: 'q58', dim: 'CO', dimName: 'Conducta', text: 'Postergo la entrega de reportes o la conversación sobre un fallo esperando que el problema se solucione solo.' },
+                    { id: 'q59', dim: 'CO', dimName: 'Conducta', text: 'Propongo hacer una pausa breve si noto que una conversación de trabajo se está volviendo acalorada.' },
+                    { id: 'q60', dim: 'CO', dimName: 'Conducta', text: 'Abordo las dificultades directamente con la persona involucrada en lugar de hablar a sus espaldas con otros compañeros.' },
+                    { id: 'q61', dim: 'CO', dimName: 'Conducta', text: 'Cumplo con disciplina los acuerdos y compromisos establecidos después de aclarar una diferencia.' },
+                    { id: 'q62', dim: 'CO', dimName: 'Conducta', text: 'Realizo un seguimiento respetuoso a las relaciones de trabajo para asegurar que la fricción quedó superada.' },
+                    { id: 'q63', dim: 'CO', dimName: 'Conducta', text: 'Aplico de manera consciente lo aprendido en conflictos pasados para no repetir el mismo error.' }
+                ]
+            },
+            leadership: {
+                id: 'leadership',
+                title: 'Influencia y Liderazgo Laboral',
+                icon: '🚀',
+                color: 'bg-lime-400 text-purple-950',
+                questions: [
+                    // Lenguaje (L) 64-70
+                    { id: 'q64', dim: 'L', dimName: 'Lenguaje', text: 'Digo con frecuencia frases como: "Yo solo cumplo con lo que me piden", limitando mi campo de acción.' },
+                    { id: 'q65', dim: 'L', dimName: 'Lenguaje', text: 'Al proponer una idea, uso expresiones defensivas como: "No sé si esto sirva, pero...", restándole valor a mi propuesta.' },
+                    { id: 'q66', dim: 'L', dimName: 'Lenguaje', text: 'Expreso disposición al equipo diciendo: "¿En qué más puedo apoyar ahora que terminé mi entregable?".' },
+                    { id: 'q67', dim: 'L', dimName: 'Lenguaje', text: 'Reconozco verbalmente y de forma específica el buen trabajo realizado por un compañero de equipo.' },
+                    { id: 'q68', dim: 'L', dimName: 'Lenguaje', text: 'Indico a otros el motivo o la importancia de un reporte cuando les solicito información.' },
+                    { id: 'q69', dim: 'L', dimName: 'Lenguaje', text: 'Me expreso con entusiasmo y optimismo respecto a las metas planteadas para la semana.' },
+                    { id: 'q70', dim: 'L', dimName: 'Lenguaje', text: 'Explico mis propuestas argumentando con datos e impacto en el proceso, no solo en opiniones personales.' },
+                    // Cognición (C) 71-77
+                    { id: 'q71', dim: 'C', dimName: 'Cognición', text: 'Creo que por estar en nivel inicial no tengo el derecho ni la capacidad de proponer mejoras en los procesos.' },
+                    { id: 'q72', dim: 'C', dimName: 'Cognición', text: 'Siento que proponer nuevas formas de hacer las cosas es responsabilidad exclusiva de los jefes.' },
+                    { id: 'q73', dim: 'C', dimName: 'Cognición', text: 'Considero que cumplir estrictamente con el horario y el mínimo de tareas es suficiente para destacar.' },
+                    { id: 'q74', dim: 'C', dimName: 'Cognición', text: 'Pienso que ganarse la confianza del equipo requiere demostración constante de responsabilidad y cumplimiento.' },
+                    { id: 'q75', dim: 'C', dimName: 'Cognición', text: 'Siento inseguridad sobre mi desempeño cuando no recibo supervisión o revisión paso a paso de mi tutor.' },
+                    { id: 'q76', dim: 'C', dimName: 'Cognición', text: 'Creo que ayudar a un compañero a resolver una duda fortalece la meta colectiva del área.' },
+                    { id: 'q77', dim: 'C', dimName: 'Cognición', text: 'Considero que el liderazgo en un practicante se demuestra al ser confiable, ético y proactivo.' },
+                    // Conducta (CO) 78-84
+                    { id: 'q78', dim: 'CO', dimName: 'Conducta', text: 'Espero a que mi tutor me asigne trabajo en lugar de tomar la iniciativa de preguntar qué más puedo hacer.' },
+                    { id: 'q79', dim: 'CO', dimName: 'Conducta', text: 'Saludo e interactúo de manera cordial y respetuosa con personas de otras áreas o departamentos.' },
+                    { id: 'q80', dim: 'CO', dimName: 'Conducta', text: 'Entrego los reportes asignados antes de la fecha límite y con una revisión previa de calidad.' },
+                    { id: 'q81', dim: 'CO', dimName: 'Conducta', text: 'Propongo soluciones concretas o alternativas cada vez que acudo a mi tutor a reportarle un problema.' },
+                    { id: 'q82', dim: 'CO', dimName: 'Conducta', text: 'Realizo seguimiento oportuno a los correos o solicitudes enviadas a otras personas sin necesidad de que me lo recuerden.' },
+                    { id: 'q83', dim: 'CO', dimName: 'Conducta', text: 'Muestro apertura y disposición positiva cuando me asignan un reto o tarea que no conocía previamente.' },
+                    { id: 'q84', dim: 'CO', dimName: 'Conducta', text: 'Mantengo ordenado y actualizado mi puesto de trabajo y mis archivos digitales para facilitar el trabajo compartido.' }
+                ]
+            }
+        };
+
+        // ESTADO GLOBAL DE LA APLICACIÓN
+        let answers = {};
+        let currentTabKey = 'time';
+        const tabKeys = ['time', 'comm', 'conflict', 'leadership'];
+        let radarChartInstance = null;
+
+        function setScore(qId, value) {
+            answers[qId] = value;
+            saveState();
+
+            // Ocultar el dashboard si el usuario altera alguna respuesta posteriormente
+            document.getElementById('dashboardSection').classList.add('hidden');
+
+            const qCard = document.getElementById(`q-card-${qId}`);
+            if (qCard) {
+                const btns = qCard.querySelectorAll('.likert-btn');
+                btns.forEach((btn, idx) => {
+                    if (idx + 1 === value) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+
+            updateProgress();
+        }
+
+        function loadSavedState() {
+            try {
+                const saved = localStorage.getItem('i3_powerskills_data');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.answers) answers = parsed.answers;
+                    if (parsed.studentName) document.getElementById('studentName').value = parsed.studentName;
+                    if (parsed.practiceArea) document.getElementById('practiceArea').value = parsed.practiceArea;
+                }
+            } catch (e) {
+                console.error("Error cargando estado guardado:", e);
+            }
+        }
+
+        function saveState() {
+            try {
+                const dataToSave = {
+                    answers: answers,
+                    studentName: document.getElementById('studentName').value,
+                    practiceArea: document.getElementById('practiceArea').value
+                };
+                localStorage.setItem('i3_powerskills_data', JSON.stringify(dataToSave));
+            } catch (e) {
+                console.error("Error guardando estado:", e);
+            }
+        }
+
+        function renderAllQuestions() {
+            tabKeys.forEach(key => {
+                const container = document.getElementById(`tab-content-${key}`);
+                if (!container) return;
+
+                const module = skillsData[key];
+                let html = `<div class="space-y-4">`;
+
+                const dimensions = [
+                    { code: 'L', name: 'Lenguaje (L)', icon: '🗣️', color: 'border-i3Pink bg-pink-50/50' },
+                    { code: 'C', name: 'Cognición (C)', icon: '🧠', color: 'border-i3Cyan bg-cyan-50/50' },
+                    { code: 'CO', name: 'Conducta (CO)', icon: '🚀', color: 'border-i3Lime bg-lime-50/50' }
+                ];
+
+                dimensions.forEach(dim => {
+                    const qList = module.questions.filter(q => q.dim === dim.code);
+                    if (qList.length === 0) return;
+
+                    html += `
+                        <div class="bg-white p-5 rounded-2xl border-2 ${dim.color} shadow-sm mb-6">
+                            <h3 class="text-sm font-extrabold text-i3DarkPurple mb-4 flex items-center gap-2 border-b pb-2 border-slate-200">
+                                <span>${dim.icon}</span> ${dim.name} — ${module.title}
+                            </h3>
+                            <div class="space-y-4">
+                    `;
+
+                    qList.forEach(q => {
+                        const currentVal = answers[q.id] || 0;
+                        html += `
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 hover:border-purple-300 transition" id="q-card-${q.id}">
+                                <p class="text-xs sm:text-sm font-extrabold text-slate-800 mb-3 flex items-start gap-2">
+                                    <span class="bg-i3Purple text-white text-[10px] px-2 py-0.5 rounded-full font-black shrink-0 mt-0.5">${q.id.toUpperCase()}</span>
+                                    <span>${q.text}</span>
+                                </p>
+                                <div class="grid grid-cols-5 gap-1.5 sm:gap-3 max-w-xl">
+                        `;
+
+                        for (let i = 1; i <= 5; i++) {
+                            const activeClass = currentVal === i ? 'active' : '';
+                            html += `
+                                <button type="button" onclick="setScore('${q.id}', ${i})" class="likert-btn ${activeClass} bg-white hover:bg-purple-100 text-slate-700 font-extrabold text-xs py-2 px-1 border-2 border-slate-300 rounded-xl flex flex-col items-center justify-center transition">
+                                    <span class="text-sm font-black">${i}</span>
+                                </button>
+                            `;
+                        }
+
+                        html += `
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+                container.innerHTML = html;
+            });
+
+            updateProgress();
+            switchTab(currentTabKey);
+        }
+
+        function confirmResetAll() {
+            showCustomModal({
+                title: '¿Reiniciar Autodiagnóstico?',
+                message: 'Esta acción borrará tus respuestas actuales y datos ingresados para iniciar una nueva evaluación. ¿Deseas continuar?',
+                confirmText: 'Sí, reiniciar',
+                cancelText: 'Cancelar',
+                showCancel: true,
+                onConfirm: () => {
+                    localStorage.removeItem('i3_powerskills_data');
+                    answers = {};
+                    document.getElementById('studentName').value = '';
+                    document.getElementById('practiceArea').value = '';
+                    renderAllQuestions();
+                    updateProgress();
+                    document.getElementById('dashboardSection').classList.add('hidden');
+                    switchTab('time');
+                }
+            });
+        }
+
+        function getCalculatedScores() {
+            let moduleScores = {};
+            tabKeys.forEach(k => {
+                const qList = skillsData[k].questions;
+                let sum = 0, count = 0;
+                qList.forEach(q => {
+                    if (answers[q.id] !== undefined) {
+                        sum += getCalculatedValue(q.id);
+                        count++;
+                    }
+                });
+                moduleScores[k] = count > 0 ? (sum / count) : 0;
+            });
+
+            let dimSums = { L: 0, C: 0, CO: 0 };
+            let dimCounts = { L: 0, C: 0, CO: 0 };
+
+            tabKeys.forEach(k => {
+                skillsData[k].questions.forEach(q => {
+                    if (answers[q.id] !== undefined) {
+                        dimSums[q.dim] += getCalculatedValue(q.id);
+                        dimCounts[q.dim]++;
+                    }
+                });
+            });
+
+            const lccScores = {
+                L: dimCounts.L > 0 ? (dimSums.L / dimCounts.L) : 0,
+                C: dimCounts.C > 0 ? (dimSums.C / dimCounts.C) : 0,
+                CO: dimCounts.CO > 0 ? (dimSums.CO / dimCounts.CO) : 0
+            };
+
+            const moduleValues = Object.values(moduleScores);
+            const globalAvg = moduleValues.length > 0 ? (moduleValues.reduce((a, b) => a + b, 0) / moduleValues.length) : 0;
+
+            return { moduleScores, lccScores, globalAvg };
+        }
+
+        function calculateResults() {
+            const name = document.getElementById('studentName').value.trim();
+            const area = document.getElementById('practiceArea').value.trim();
+
+            if (!name || !area) {
+                showCustomModal({
+                    title: 'Datos Incompletos',
+                    message: 'Por favor completa tu Nombre y Área de Práctica en el Paso 1 antes de analizar tus resultados.',
+                    confirmText: 'Entendido',
+                    showCancel: false
+                });
+                window.scrollTo({ top: 100, behavior: 'smooth' });
+                return null;
+            }
+
+            const totalAnswered = Object.keys(answers).length;
+            if (totalAnswered < 84) {
+                let firstUnanswered = null;
+                for (const k of tabKeys) {
+                    const qList = skillsData[k].questions;
+                    for (const q of qList) {
+                        if (answers[q.id] === undefined) {
+                            firstUnanswered = { tabKey: k, qId: q.id };
+                            break;
+                        }
+                    }
+                    if (firstUnanswered) break;
+                }
+
+                showCustomModal({
+                    title: 'Evaluación Incompleta',
+                    message: `Para analizar tu perfil debes responder las 84 preguntas. Has completado ${totalAnswered} de 84. Te llevaremos a la primera pregunta pendiente.`,
+                    confirmText: 'Ir a Pregunta Pendiente',
+                    showCancel: false,
+                    onConfirm: () => {
+                        if (firstUnanswered) {
+                            switchTab(firstUnanswered.tabKey);
+                            setTimeout(() => {
+                                const el = document.getElementById(`q-card-${firstUnanswered.qId}`);
+                                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }, 100);
+                        }
+                    }
+                });
+                return null;
+            }
+
+            return executeCalculations(name, area);
+        }
+
+        function executeCalculations(name, area) {
+            const calculated = getCalculatedScores();
+            const resData = { name, area, ...calculated };
+            displayDashboard(resData);
+            return resData;
+        }
+
+        function getLevelInfo(score) {
+            if (score < 3.0) {
+                return { name: 'Nivel Inicial / En Desarrollo', color: 'text-orange-400', badgeBg: 'bg-orange-500 text-white' };
+            } else if (score < 4.0) {
+                return { name: 'Nivel Práctico / En Transición', color: 'text-i3Cyan', badgeBg: 'bg-i3Cyan text-white' };
+            } else {
+                return { name: 'Nivel Autónomo / Destacado', color: 'text-i3Lime', badgeBg: 'bg-i3Lime text-purple-950' };
+            }
+        }
+
+        function generateDashboard() {
+            calculateResults();
+        }
+
+        function displayDashboard(data) {
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('dashStudentMeta').innerText = `Practicante: ${data.name} | Área: ${data.area}`;
+            
+            // Set Promedio Global
+            document.getElementById('globalScore').innerText = data.globalAvg.toFixed(2);
+            const lvl = getLevelInfo(data.globalAvg);
+            document.getElementById('globalLevel').innerText = lvl.name;
+
+            // Determinar Fuerte y Oportunidad
+            let sortedModules = tabKeys.map(k => ({
+                key: k,
+                title: skillsData[k].title,
+                score: data.moduleScores[k]
+            })).sort((a,b) => b.score - a.score);
+
+            document.getElementById('strongestSkill').innerHTML = `<i class="fa-solid fa-trophy"></i> ${sortedModules[0].title} (${sortedModules[0].score.toFixed(1)})`;
+            document.getElementById('weakestSkill').innerHTML = `<i class="fa-solid fa-bullseye"></i> ${sortedModules[sortedModules.length-1].title} (${sortedModules[sortedModules.length-1].score.toFixed(1)})`;
+
+            // Dimensión LCC Transversal
+            document.getElementById('scoreL').innerText = `${data.lccScores.L.toFixed(2)} / 5.0`;
+            document.getElementById('scoreC').innerText = `${data.lccScores.C.toFixed(2)} / 5.0`;
+            document.getElementById('scoreCO').innerText = `${data.lccScores.CO.toFixed(2)} / 5.0`;
+
+            // Rendir Gráfico Radar
+            renderRadarChart(data.moduleScores);
+
+            // Renderizar Grid de Detalle
+            renderDetailGrid(data.moduleScores);
+
+            // Scroll a dashboard
+            document.getElementById('dashboardSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateProgress() {
+            const totalAnswered = Object.keys(answers).length;
+            const totalQuestions = 84;
+            const percentage = Math.round((totalAnswered / totalQuestions) * 100);
+
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            if (progressBar) progressBar.style.width = `${percentage}%`;
+            if (progressText) progressText.innerText = `${totalAnswered} / ${totalQuestions} Respuestas (${percentage}%)`;
+
+            tabKeys.forEach(k => {
+                const count = skillsData[k].questions.filter(q => answers[q.id] !== undefined).length;
+                const badge = document.getElementById(`badge-${k}`);
+                if (badge) {
+                    badge.innerText = `${count}/21`;
+                    if (count === 21) {
+                        badge.className = 'bg-i3Lime text-purple-950 text-xs font-black px-2 py-0.5 rounded-full ml-1';
+                    } else if (count > 0) {
+                        badge.className = 'bg-i3Yellow text-purple-950 text-xs font-black px-2 py-0.5 rounded-full ml-1';
+                    } else {
+                        badge.className = 'bg-slate-200 text-slate-800 text-xs font-black px-2 py-0.5 rounded-full ml-1';
+                    }
+                }
+            });
+        }
+
+        function switchTab(tabKey) {
+            currentTabKey = tabKey;
+            tabKeys.forEach(k => {
+                const content = document.getElementById(`tab-content-${k}`);
+                const tabBtn = document.getElementById(`tab-${k}`);
+                if (content) content.classList.add('hidden');
+                if (tabBtn) tabBtn.className = 'tab-btn bg-white hover:bg-slate-100 text-slate-700 font-extrabold py-3 px-5 rounded-2xl shadow-sm transition flex items-center gap-2 text-sm';
+            });
+
+            const activeContent = document.getElementById(`tab-content-${tabKey}`);
+            const activeBtn = document.getElementById(`tab-${tabKey}`);
+            if (activeContent) activeContent.classList.remove('hidden');
+            if (activeBtn) activeBtn.className = 'tab-btn active bg-i3Purple text-white font-extrabold py-3 px-5 rounded-2xl shadow transition flex items-center gap-2 text-sm';
+
+            const currentIndex = tabKeys.indexOf(tabKey);
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (prevBtn) { prevBtn.disabled = currentIndex === 0; prevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1'; }
+            if (nextBtn) { nextBtn.disabled = currentIndex === tabKeys.length - 1; nextBtn.style.opacity = currentIndex === tabKeys.length - 1 ? '0.5' : '1'; }
+        }
+
+        function navigateWizard(direction) {
+            const newIndex = tabKeys.indexOf(currentTabKey) + direction;
+            if (newIndex >= 0 && newIndex < tabKeys.length) {
+                switchTab(tabKeys[newIndex]);
+                window.scrollTo({ top: 300, behavior: 'smooth' });
+            }
+        }
+
+        function renderRadarChart(scores) {
+            const ctx = document.getElementById('skillsRadarChart').getContext('2d');
+            if (radarChartInstance) radarChartInstance.destroy();
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Gestión Tiempo', 'Com. Asertiva', 'Res. Conflictos', 'Influencia y Liderazgo'],
+                    datasets: [{
+                        label: 'Puntaje Obtenido (1-5)',
+                        data: [scores.time, scores.comm, scores.conflict, scores.leadership],
+                        backgroundColor: 'rgba(250, 204, 21, 0.35)',
+                        borderColor: '#FACC15',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#581C87',
+                        pointBorderColor: '#FFFFFF',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            min: 0, max: 5,
+                            ticks: { stepSize: 1, color: '#475569', font: { weight: 'bold' } },
+                            grid: { color: 'rgba(0,0,0,0.1)' },
+                            angleLines: { color: 'rgba(0,0,0,0.1)' },
+                            pointLabels: { font: { size: 11, weight: 'bold', family: 'Plus Jakarta Sans' }, color: '#3B0764' }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function renderDetailGrid(scores) {
+            const grid = document.getElementById('skillsDetailGrid');
+            const feedbackMap = {
+                time: {
+                    low: 'Enfócate en la técnica del registro diario de pendientes y la priorización según urgencia/importancia.',
+                    med: 'Buen manejo de tareas. Afianza el hábito de fijar acuerdos claros de tiempo con tu tutor.',
+                    high: 'Excelente nivel de organización autónoma. Sigue compartiendo tu metodología con tus compañeros.'
+                },
+                comm: {
+                    low: 'Practica la paráfrasis ("Para confirmar, lo que debo hacer es...") al recibir instrucciones para evitar vacíos.',
+                    med: 'Comunicación funcional. Trabaja en fundamentar tus avances con datos concretos y métricas.',
+                    high: 'Expresión asertiva, clara y respetuosa. Muestras seguridad profesional en tus intervenciones.'
+                },
+                conflict: {
+                    low: 'Recuerda que las correcciones en práctica son oportunidades de aprendizaje, no ataques personales.',
+                    med: 'Manejas bien la calma. Enfócate en proponer soluciones directas en lugar de posponer la conversación.',
+                    high: 'Alta inteligencia emocional. Resuelves fricciones mediante la escucha y el enfoque en acuerdos.'
+                },
+                leadership: {
+                    low: 'Atrévete a preguntar "¿En qué más puedo apoyar?" una vez termines tu lista de entregables.',
+                    med: 'Iniciativa positiva. Presenta propuestas simples acompañadas de los beneficios para el proceso.',
+                    high: 'Proactividad y visión de impacto destacadas. Generas confianza de alto valor en tu equipo.'
+                }
+            };
+
+            let html = '';
+            tabKeys.forEach(k => {
+                const module = skillsData[k];
+                const score = scores[k];
+                const lvl = getLevelInfo(score);
+                const fb = score < 3.0 ? feedbackMap[k].low : (score < 4.0 ? feedbackMap[k].med : feedbackMap[k].high);
+                html += `
+                    <div class="bg-purple-900/80 border-2 border-purple-600/50 p-5 rounded-2xl relative">
+                        <div class="flex justify-between items-start gap-2 mb-3">
+                            <span class="text-base font-extrabold text-white flex items-center gap-2"><span>${module.icon}</span> ${module.title}</span>
+                            <span class="${lvl.badgeBg} text-xs font-black px-2.5 py-1 rounded-full shrink-0">${score.toFixed(1)} / 5.0</span>
+                        </div>
+                        <span class="text-xs font-bold ${lvl.color} block mb-2">${lvl.name}</span>
+                        <p class="text-xs text-purple-100 bg-purple-950/60 p-3 rounded-xl border border-purple-800"><strong>Recomendación I3:</strong> ${fb}</p>
+                    </div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function downloadPDF() {
+            const name = document.getElementById('studentName').value.trim();
+            const area = document.getElementById('practiceArea').value.trim();
+
+            if (!name || !area) {
+                showCustomModal({
+                    title: 'Campos requeridos',
+                    message: 'Por favor completa tu Nombre Completo y Área de Práctica para poder exportar el PDF.',
+                    confirmText: 'Entendido',
+                    showCancel: false
+                });
+                return;
+            }
+
+            const totalAnswered = Object.keys(answers).length;
+            if (totalAnswered < 84) {
+                showCustomModal({
+                    title: 'Evaluación Incompleta',
+                    message: `No es posible descargar el informe PDF hasta responder la totalidad de las 84 preguntas. Has respondido ${totalAnswered} de 84 preguntas.`,
+                    confirmText: 'Entendido',
+                    showCancel: false
+                });
+                return;
+            }
+
+            const calculated = getCalculatedScores();
+            const data = { name, area, ...calculated };
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+            const primaryColor = [59, 7, 100];   // i3DarkPurple (#3B0764)
+            const yellowColor = [250, 204, 21];  // i3Yellow (#FACC15)
+            const cyanColor = [6, 182, 212];    // i3Cyan (#06B6D4)
+
+            // ENCABEZADO PDF
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, 210, 32, 'F');
+
+            doc.setFillColor(...yellowColor);
+            doc.rect(0, 32, 210, 2, 'F');
+
+            // Logo Text
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(20);
+            doc.setTextColor(250, 204, 21);
+            doc.text("instituto i3", 14, 16);
+
+            doc.setFontSize(9);
+            doc.setTextColor(255, 255, 255);
+            doc.text("inclusión • inflexión • impacto", 14, 22);
+
+            doc.setFontSize(12);
+            doc.setTextColor(255, 255, 255);
+            doc.text("INFORME INTEGRAL DE POWER SKILLS LCC", 196, 18, { align: "right" });
+
+            // DATOS ESTUDIANTE Y PROMEDIO GLOBAL (RECTÁNGULO AJUSTADO A 30 MM)
+            doc.setFontSize(10);
+            doc.setFillColor(245, 245, 250);
+            doc.roundedRect(14, 40, 182, 30, 3, 3, 'F');
+
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(50, 50, 50);
+            doc.text("Practicante:", 18, 48);
+            doc.setFont("helvetica", "normal");
+            doc.text(data.name, 45, 48, { maxWidth: 80 });
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Fecha:", 130, 48);
+            doc.setFont("helvetica", "normal");
+            doc.text(new Date().toLocaleDateString('es-ES'), 150, 48);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Programa/Área:", 18, 56);
+            doc.setFont("helvetica", "normal");
+            doc.text(data.area, 52, 56);
+
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(50, 50, 50);
+            doc.text("Promedio Global:", 18, 64);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(59, 7, 100);
+            doc.text(`${data.globalAvg.toFixed(2)} / 5.0 — ${getLevelInfo(data.globalAvg).name}`, 52, 64);
+
+            // TABLA 1: RESUMEN DE COMPETENCIAS
+            doc.setFontSize(12);
+            doc.setTextColor(59, 7, 100);
+            doc.setFont("helvetica", "bold");
+            doc.text("1. Resumen por Competencia: Evaluación de Power Skills", 14, 80);
+
+            const table1Data = tabKeys.map(k => {
+                const score = data.moduleScores[k];
+                return [
+                    skillsData[k].title,
+                    `${score.toFixed(2)} / 5.0`,
+                    getLevelInfo(score).name
+                ];
+            });
+
+            doc.autoTable({
+                startY: 84,
+                head: [['Competencia Evaluada', 'Puntaje', 'Nivel Alcanzado']],
+                body: table1Data,
+                headStyles: { fillColor: primaryColor, textColor: [255, 255, 255], fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [248, 246, 252] },
+                margin: { left: 14, right: 14 }
+            });
+
+            // TABLA 2: TRIANGULACIÓN LCC TRANSVERSAL
+            let finalY1 = doc.lastAutoTable.finalY || 120;
+
+            doc.setFontSize(12);
+            doc.setTextColor(59, 7, 100);
+            doc.setFont("helvetica", "bold");
+            doc.text("2. Desglose Transversal Modelo LCC (Lenguaje, Cognición, Conducta)", 14, finalY1 + 10);
+
+            const table2Data = [
+                ['Lenguaje (L)', `${data.lccScores.L.toFixed(2)} / 5.0`, 'Expresión verbal, solicitud de feedback y claridad de mensajes.'],
+                ['Cognición (C)', `${data.lccScores.C.toFixed(2)} / 5.0`, 'Manejo de creencias, afrontamiento del error y mindset inicial.'],
+                ['Conducta (CO)', `${data.lccScores.CO.toFixed(2)} / 5.0`, 'Acciones de planificación, cumplimiento y hábito de ejecución.']
+            ];
+
+            doc.autoTable({
+                startY: finalY1 + 14,
+                head: [['Dimensión LCC', 'Promedio Transversal', 'Enfoque Pedagógico Evaluado']],
+                body: table2Data,
+                headStyles: { fillColor: cyanColor, textColor: [255, 255, 255], fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 253, 250] },
+                margin: { left: 14, right: 14 }
+            });
+
+            // SECCIÓN RECOMENDACIONES ORIENTADAS AL CRECIMIENTO (CON X=78 Y MAXWIDTH=118)
+            let finalY2 = doc.lastAutoTable.finalY || 180;
+
+            doc.setFontSize(12);
+            doc.setTextColor(59, 7, 100);
+            doc.setFont("helvetica", "bold");
+            doc.text("3. Plan de Afianzamiento Sugerido para la Práctica", 14, finalY2 + 10);
+
+            doc.setFontSize(9);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(60, 60, 60);
+
+            let currentY = finalY2 + 16;
+            
+            tabKeys.forEach(k => {
+                const score = data.moduleScores[k];
+                let rec = score < 3.0 ? 
+                    'Prioridad Alta: Realizar seguimiento diario con el tutor de práctica e implementar lista de chequeo de tareas.' :
+                    (score < 4.0 ? 'Prioridad Media: Fortalecer la argumentación con datos y la iniciativa al terminar entregables.' : 'Mantener nivel destacado y servir como referente proactivo dentro del equipo.');
+
+                doc.setFont("helvetica", "bold");
+                doc.text(`• ${skillsData[k].title}:`, 16, currentY);
+                doc.setFont("helvetica", "normal");
+                doc.text(rec, 78, currentY, { maxWidth: 118 });
+                currentY += 10;
+            });
+
+            // BLOQUE DE INSTRUCCIÓN DESTACADO AL FINAL DEL PDF
+            if (currentY > 255) {
+                doc.addPage();
+                currentY = 20;
+            } else {
+                currentY += 4;
+            }
+
+            doc.setFillColor(88, 28, 135); // i3DarkPurple (#581C87)
+            doc.roundedRect(14, currentY, 182, 14, 3, 3, 'F');
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10);
+            doc.setTextColor(250, 204, 21); // i3Yellow (#FACC15)
+            doc.text("Ahora debes cargar este informe en el asistente IA compartido por el coach", 105, currentY + 9, { align: "center" });
+
+            // PIE DE PÁGINA PDF
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text(`Instituto i3 — Documento Consolidado de Evaluación de Power Skills (Página ${i} de ${pageCount})`, 105, 287, { align: "center" });
+            }
+
+            doc.save(`Informe_PowerSkills_I3_${data.name.replace(/\s+/g, '_')}.pdf`);
+        }
+
+        // INICIALIZACIÓN COMPLETA AL CARGAR EL DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedState();
+            renderAllQuestions();
+            updateProgress();
+            document.getElementById('studentName').addEventListener('input', saveState);
+            document.getElementById('practiceArea').addEventListener('input', saveState);
+        });
+    </script>
+</body>
+</html>
